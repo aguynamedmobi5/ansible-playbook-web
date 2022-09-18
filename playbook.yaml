@@ -1,0 +1,47 @@
+- hosts: [webservers]
+  name: Hosting a website using Ansible
+  become: yes
+  tasks:
+    - name: Install HTTPD
+      yum:
+        name: httpd
+        state: present
+    - name: Install wget
+      yum:
+        name: wget
+        state: present
+    - name: Install unzip
+      yum:
+        name: unzip
+        state: present
+    - name: Start httpd service
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+- hosts: web01
+  name: host a website from template
+  become: yes
+  tasks:
+    - name: Download Template
+      unarchive:
+        src: https://www.tooplate.com/zip-templates/2128_tween_agency.zip
+        dest: /etc
+        remote_src: yes
+    - name: Copy the files
+      shell:
+        cmd: cp -r /etc/2128_tween_agency/* /var/www/html
+
+- hosts: web02
+  name: host a website from another template
+  become: yes
+  tasks:
+    - name: Download Template
+      unarchive:
+        src: https://www.tooplate.com/zip-templates/2108_dashboard.zip
+        dest: /etc
+        remote_src: yes
+    - name: Copy the files
+      shell:
+        cmd: cp -r /etc/2108_dashboard/* /var/www/html
